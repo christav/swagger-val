@@ -1,7 +1,8 @@
-var http = require('http');
+var debug = require('debug')('swagger-val');
+var sfmt = require('sfmt');
+var app = require('./app');
 
-http.createServer(function(req,res) {
-  res.end("Node Version: " + process.version);
-}).listen(process.env.PORT || 3000);
-
-console.log('Listening');
+debug('Starting up');
+app.start(function () {
+  debug(sfmt('App started on %{0}', app.info.uri));
+});
