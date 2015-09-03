@@ -1,0 +1,23 @@
+{
+  "name": "swagger-validator-site",
+  "version": "0.1.0",
+  "description": "A web app that runs validation of a swagger document",
+  "author": "Chris Tavares <ctavares@microsoft.com>",
+  "engines": {
+    "node": "0.12.7",
+    "npm": "2.11.3"
+  },
+  "private": true,
+  "dependencies": {
+    "debug": "^2.2.0",
+    "handlebars": "^4.0.1",
+    "hapi": "^9.0.4",
+    "tv4": "^1.2.5",
+    "vision": "^3.0.0"
+  },
+  "devDependencies": {
+    "chai": "^3.2.0",
+    "joe": "^1.6.0",
+    "joe-reporter-console": "^1.2.1"
+  }
+}
