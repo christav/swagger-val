@@ -3,7 +3,6 @@
 var expect = require('chai').expect;
 var joe = require('joe');
 var tv4 = require('tv4');
-
 var schema = require('swagger-schema-official/schema.json');
 tv4.addSchema(schema);
 
