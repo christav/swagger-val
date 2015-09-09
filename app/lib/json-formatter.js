@@ -15,9 +15,91 @@
 
 'use strict';
 
-exports.format = function () {
-  return [
-    { string: '{', level: 0, path: '/' },
-    { string: '}', level: 0 }
-  ];
+var _ = require('lodash');
+var debug = require('debug')('json-formatter');
+var sfmt = require('sfmt');
+
+function formatObject(level, parentPath, propertyName, obj) {
+  debug(sfmt('formatting object %i', obj));
+  return _(obj)
+    .pairs()
+    .map(function (pair) {
+      debug(sfmt('Formatting property %i', pair));
+      var formatted = formatProperty(level, parentPath, pair[0], pair[1]);
+      debug(sfmt('formatted = %i', formatted));
+      return formatted;
+    })
+    .flatten()
+    .value();
+}
+
+function formatProperty(level, parentPath, propertyName, propertyValue) {
+  var propertyPath = [parentPath, createPathSegment(propertyName)].join('/');
+  var formatted;
+  var preamble;
+  var postamble;
+
+  function makePreamble(preambleChar) {
+    return {
+      string: sfmt('"%{0}": %{1}', propertyName, preambleChar),
+      level: level,
+      path: propertyPath
+    };
+  }
+
+  function makePostamble(postambleChar) {
+    return {
+      string: sfmt('%{0}', postambleChar),
+      level: level,
+      path: propertyPath
+    };
+  }
+
+  if (_.isObject(propertyValue)) {
+    debug('value is object');
+    preamble = makePreamble('{');
+    formatted = formatObject(level + 1, propertyPath, propertyName, propertyValue);
+    postamble = makePostamble('}');
+  }
+  else if (_.isArray(propertyValue)) {
+    debug('value is array');
+    preamble = makePreamble('[');
+    formatted = formatArray(level + 1, propertyPath, propertyName, propertyValue);
+    postamble = makePostamble(']');
+  }
+  else {
+    debug('value is scalar');
+    preamble = [];
+    formatted = formatScalar(level, propertyPath, propertyName, propertyValue);
+    postamble = [];
+  }
+
+  return _.flatten([preamble, formatted, postamble]);
+}
+
+function formatArray(level, parentPath, propertyName, arr) {
+}
+
+function formatScalar(level, parentPath, propertyName, propertyValue) {
+  if (_.isString(propertyValue)) {
+    propertyValue = sfmt('"%s"', propertyValue);
+  }
+  return [{
+      string: sfmt('"%{0}": %{1}', propertyName, propertyValue),
+      level: level,
+      path: parentPath
+    }];
+}
+
+function createPathSegment(propertyName) {
+
+  return propertyName.replace('~', '~0').replace('/', '~1');
+}
+
+exports.format = function (data) {
+  return _.flatten([
+      { string: '{', level: 0, path: '/' },
+      formatObject(1, '', null, data),
+      { string: '}', level: 0 }
+  ]);
 };

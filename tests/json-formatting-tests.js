@@ -15,6 +15,7 @@
 
 'use strict';
 
+var _ = require('lodash');
 var joe = require('joe');
 var chai = require('chai');
 chai.use(require('chai-things'));
@@ -46,4 +47,43 @@ joe.describe('Json display formatting', function (describe, it) {
       expect(formatted[0]).to.have.property('path', '/');
     });
   });
+
+  describe('object with single level of properties', function (describe, it) {
+    var formatted = formatter.format({
+      a: 1,
+      b: 'hello',
+      c: 'world'
+    });
+
+    it('should have 5 lines', function () {
+      expect(formatted).to.have.length(5);
+    });
+
+    it('should be level 0 for outer braces', function () {
+      expect(formatted[0]).to.have.property('level', 0);
+      expect(formatted[4]).to.have.property('level', 0);
+    });
+
+    it('should be level 1 for contents', function () {
+      expect(_.slice(formatted, 1, formatted.length - 1)).all.to.have.property('level', 1);
+    });
+  });
+/*
+  describe('object with properties and arrays', function (describe, it) {
+    var formatted = formatter.format({
+      a: 1,
+      b: {
+        'c~': 'hello', d: 'world',
+      },
+      e: [
+        { name: 'prop1'},
+        { name: 'prop2' }
+      ]
+    });
+
+    it('should have 15 lines', function () {
+      expect(formatted).to.have.length(15);
+    });
+  });
+*/
 });

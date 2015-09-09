@@ -12,6 +12,7 @@
     "debug": "^2.2.0",
     "handlebars": "^4.0.1",
     "hapi": "^9.0.4",
+    "lodash": "^3.10.1",
     "sfmt": "^1.0.3",
     "swagger-schema-official": "^2.0.0-96305d9",
     "tv4": "^1.2.5",
