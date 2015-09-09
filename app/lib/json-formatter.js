@@ -31,6 +31,8 @@ function formatObject(level, parentPath, propertyName, obj) {
     })
     .flatten()
     .value();
+
+
 }
 
 function formatProperty(level, parentPath, propertyName, propertyValue) {
@@ -55,19 +57,17 @@ function formatProperty(level, parentPath, propertyName, propertyValue) {
     };
   }
 
-  if (_.isObject(propertyValue)) {
-    debug('value is object');
-    preamble = makePreamble('{');
-    formatted = formatObject(level + 1, propertyPath, propertyName, propertyValue);
-    postamble = makePostamble('}');
-  }
-  else if (_.isArray(propertyValue)) {
+  if (_.isArray(propertyValue)) {
     debug('value is array');
     preamble = makePreamble('[');
     formatted = formatArray(level + 1, propertyPath, propertyName, propertyValue);
     postamble = makePostamble(']');
-  }
-  else {
+  } else if (_.isObject(propertyValue)) {
+    debug('value is object');
+    preamble = makePreamble('{');
+    formatted = formatObject(level + 1, propertyPath, propertyName, propertyValue);
+    postamble = makePostamble('}');
+  } else {
     debug('value is scalar');
     preamble = [];
     formatted = formatScalar(level, propertyPath, propertyName, propertyValue);
@@ -78,6 +78,38 @@ function formatProperty(level, parentPath, propertyName, propertyValue) {
 }
 
 function formatArray(level, parentPath, propertyName, arr) {
+  return _.flatten(arr.map(function (item, index) {
+    debug(sfmt('Formatting array item index %{0}: %{1:i}', index, item));
+    var itemPath = parentPath + '/' + index;
+    return formatArrayItem(level, itemPath, item);
+  }));
+}
+
+function formatArrayItem(level, parentPath, item) {
+  var formatted;
+  if (_.isArray(item)) {
+    debug('item is array');
+    formatted = [
+      { string: '[', level: level, path: parentPath },
+      formatArray(level + 1, parentPath, "", item),
+      { string: ']', level: level, path: parentPath }
+    ];
+  } else if (_.isObject(item)) {
+    debug('item is object');
+    formatted = [
+      { string: '{', level: level, path: parentPath },
+      formatObject(level + 1, parentPath, "", item),
+      { string: '}', level: level, path: parentPath }
+    ]
+  } else {
+    debug('item is scalar');
+    if (_.isString(item)) {
+      item = sfmt('"%s"', item);
+    }
+    formatted = [{ string: item, level: level, path: parentPath }];
+  }
+
+  return _.flatten(formatted);
 }
 
 function formatScalar(level, parentPath, propertyName, propertyValue) {
@@ -96,10 +128,21 @@ function createPathSegment(propertyName) {
   return propertyName.replace('~', '~0').replace('/', '~1');
 }
 
+function addCommas(items) {
+  return items.map(function (item, index) {
+    if (index < items.length - 1 && item.level > 0) {
+      if (item.level === items[index+1].level) {
+        item.string += ',';
+      }
+    }
+    return item;
+  });
+}
+
 exports.format = function (data) {
-  return _.flatten([
+  return addCommas(_.flatten([
       { string: '{', level: 0, path: '/' },
       formatObject(1, '', null, data),
       { string: '}', level: 0 }
-  ]);
+  ]));
 };

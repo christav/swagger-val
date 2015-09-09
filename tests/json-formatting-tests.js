@@ -28,7 +28,11 @@ joe.describe('Json display formatting', function (describe, it) {
   this.setNestedConfig({onError: 'ignore'});
 
   describe('empty object', function (describe, it) {
-    var formatted = formatter.format({});
+    var formatted;
+
+    this.on('test.before', function () {
+      formatted = formatter.format({});
+    });
 
     it('should have two lines', function () {
       expect(formatted).to.have.length(2);
@@ -49,10 +53,14 @@ joe.describe('Json display formatting', function (describe, it) {
   });
 
   describe('object with single level of properties', function (describe, it) {
-    var formatted = formatter.format({
-      a: 1,
-      b: 'hello',
-      c: 'world'
+    var formatted;
+
+    this.on('test.before', function () {
+      formatted = formatter.format({
+        a: 1,
+        b: 'hello',
+        c: 'world'
+      });
     });
 
     it('should have 5 lines', function () {
@@ -68,22 +76,79 @@ joe.describe('Json display formatting', function (describe, it) {
       expect(_.slice(formatted, 1, formatted.length - 1)).all.to.have.property('level', 1);
     });
   });
-/*
+
   describe('object with properties and arrays', function (describe, it) {
-    var formatted = formatter.format({
-      a: 1,
-      b: {
-        'c~': 'hello', d: 'world',
-      },
-      e: [
-        { name: 'prop1'},
-        { name: 'prop2' }
-      ]
+
+    var formatted;
+
+    this.on('test.before', function (test) {
+      formatted = formatter.format({
+        a: 1,
+        b: {
+          'c~': 'hello', d: 'world',
+        },
+        e: [
+          'a', 'b',
+          { name: 'prop1'},
+          { name: 'prop2' },
+          [
+            { nested: [ 1, "two" ] },
+            { 'why': 'not' }
+          ]
+        ]
+      });
     });
 
-    it('should have 15 lines', function () {
-      expect(formatted).to.have.length(15);
+    it('should have 28 lines', function () {
+      expect(formatted).to.have.length(28);
+    });
+
+    it('should have expected levels', function () {
+      expect(_.pluck(formatted, 'level')).to.deep.equal([
+        0,
+          1,
+          1,
+            2,
+            2,
+          1,
+          1,
+            2,
+            2,
+            2,
+              3,
+            2,
+            2,
+              3,
+            2,
+            2,
+              3,
+                4,
+                  5,
+                  5,
+                4,
+              3,
+              3,
+                4,
+              3,
+            2,
+          1,
+        0]);
+    });
+
+    it('should have commas between sibling nodes', function () {
+      var trailingComma = /,$/;
+      var siblingIndexes = [1, 3, 5, 7, 8, 11, 14, 18, 21];
+      siblingIndexes.forEach(function (i) {
+        expect(formatted[i].string).to.match(trailingComma, sfmt('Mismatch at index %d: %s', i, formatted[i].string));
+      });
+    });
+
+    it('should not have commas where nodes are at different levels', function () {
+      var trailingComma = /,$/;
+      var differentNodes = [0, 2, 4, 6, 9, 10, 12, 13, 15, 16, 17, 19, 20, 22, 23, 24, 25, 26, 27];
+      differentNodes.forEach(function (i) {
+        expect(formatted[i].string).to.not.match(trailingComma, sfmt('Mismatch at index %d: %s', i, formatted[i].string));
+      });
     });
   });
-*/
 });
