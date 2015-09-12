@@ -27,8 +27,8 @@ server.register(require('vision'), function (err) {
 server.route({
   method: 'GET',
   path: '/',
-  handler: function (request, reply) {
-    reply('Hello, it\'s working!');
+  handler: {
+    view: 'index'
   }
 });
 
