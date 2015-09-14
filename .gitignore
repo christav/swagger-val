@@ -1,5 +1,6 @@
 projects/*
 targets/*
+webroot/*
 
 # Visual Studio #
 /app.js
