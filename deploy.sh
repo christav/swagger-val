@@ -4,7 +4,7 @@
 # KUDU Deployment Script
 # ----------------------
 
-# Helpers 
+# Helpers
 # -------
 
 exitWithMessageOnError () {
@@ -88,9 +88,9 @@ installNodeAndNpm() {
   SELECT_NODE_VERSION="\"$NODE_EXE\" \"$DEPLOYMENT_TARGET/conf.js\""
   eval "$SELECT_NODE_VERSION"
   NODE_VERSION=`cat nodeVersion.tmp`
-  NPM_VERSION=`cat npmVersion.tmp` 
+  NPM_VERSION=`cat npmVersion.tmp`
   echo "node version: `nodist $NODE_VERSION`"
-# Check the locally installed npm to see if it matches the required version. 
+# Check the locally installed npm to see if it matches the required version.
 # If a range is specified, it will not match up and so npm will still be invoked.
 # For best performance specify a specific version rather than a semver expression
   MATCH=`npm ls npm@$NPM_VERSION | grep -c $NPM_VERSION`
@@ -105,7 +105,7 @@ installNodeAndNpm() {
 # Deployment
 # ----------
 
-echo Handling node.js deployment. 
+echo Handling node.js deployment.
 
 # 1. KuduSync
 $KUDU_SYNC_CMD -v 50 -f "$DEPLOYMENT_SOURCE" -t "$DEPLOYMENT_TARGET" -n "$NEXT_MANIFEST_PATH" -p "$PREVIOUS_MANIFEST_PATH" -i ".git;.hg;.deployment;deploy.sh"
@@ -122,7 +122,27 @@ if [ -e "$DEPLOYMENT_TARGET/package.json" ]; then
   cd "$DEPLOYMENT_TARGET"
   cmd.exe /c "\"$NPM_CMD\" install --production"
   exitWithMessageOnError "npm failed"
-  cd - > /dev/null 
+  cd - > /dev/null
+fi
+
+# 4. Install bower packages
+if [ -e "$DEPLOYMENT_TARGET/bower.json" ]; then
+  cd "$DEPLOYMENT_TARGET"
+  eval $NPM_CMD install bower
+  exitWithMessageOnError "installing bower failed"
+  ./node_modules/.bin/bower install
+  exitWithmessageOnError "bower failed"
+  cd - > /dev/null
+fi
+
+# 5. Gulp build
+if [ -e "$DEPLOYMENT_TARGET/gulpfile.js" ]; then
+  cd "$DEPLOYMENT_TARGET"
+  eval $NPM_CMD install gulp
+  exitWithMessageOnError "installing gulp failed"
+  ./node_modules/.bin/gulp
+  exitWithmessageOnError "gulp failed"
+  cd - > /dev/null
 fi
 
 ##################################################################################################################################
