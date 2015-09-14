@@ -13,6 +13,7 @@
     "handlebars": "^4.0.1",
     "hapi": "^9.3.1",
     "hoek": "^2.15.0",
+    "inert": "^3.0.1",
     "lodash": "^3.10.1",
     "sfmt": "^1.0.3",
     "swagger-schema-official": "^2.0.0-96305d9",

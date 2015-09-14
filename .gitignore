@@ -19,6 +19,9 @@ npm-debug.log
 azure.err
 azure_error
 
+# Bower #
+bower_components/
+
 # Builds #
 out/*
 tmp/*
