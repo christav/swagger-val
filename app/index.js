@@ -2,6 +2,8 @@
 
 var debug = require('debug')('swagger-val:main');
 var Hapi = require('hapi');
+var handlebars = require('handlebars');
+var layouts = require('handlebars-layouts');
 var Hoek = require('hoek');
 
 var sfmt = require('sfmt');
@@ -9,7 +11,8 @@ var sfmt = require('sfmt');
 var routes = require('./routes');
 var server = new Hapi.Server();
 
-server.reg
+var engine = handlebars.create();
+layouts.register(engine);
 
 var port = +(process.env['PORT'] || 3000);
 server.connection({port: port});
@@ -18,15 +21,13 @@ server.register([require('vision'), require('inert')], function (err) {
 
   server.views({
     engines: {
-      hbs: require('handlebars')
+      hbs: engine
     },
     relativeTo: __dirname,
     path: './views',
-    layoutPath: './views/layouts',
     partialsPath: './views/partials',
-    helpersPath: './lib/viewHelpers'
+    helpersPath: './lib/viewHelpers',
   });
-
 
   routes.forEach(function (route) {
     debug(sfmt('Binding route for %{0}', route.path));

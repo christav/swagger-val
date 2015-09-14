@@ -1,9 +1,11 @@
-<html>
-    <head>
-        <title>A root from a template</title>
-    </head>
-    <body>
-        <h2>Hey, it works from a template!</h2>
-        <p>{{fortune}}</p>
-    </body>
-</html>
+{{#extend "default"}}
+
+{{#content "head"}}
+    <title>Swagger Validator</title>
+{{/content}}
+
+{{#content "body"}}
+<h2>Hey, it works from a template!</h2>
+<p>{{fortune}}</p>
+{{/content}}
+{{/extend}}
