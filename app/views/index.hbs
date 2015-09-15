@@ -2,5 +2,32 @@
     <title>Swagger Validator</title>
 {{/contentFor}}
 
-<h2>Hey, it works from a template!</h2>
-<p>{{fortune}}</p>
+<h2>Validate your swagger here</h2>
+<form>
+    <div class="form-group">
+        <div class="radio">
+            <label>
+                <input type="radio" name="input-flavor" value="input" checked />
+                Input Swagger directly
+            </label>
+        </div>
+        <textarea id="swaggerInput" class="form-control" cols="96" rows="15" name="swagger-input"></textarea>
+
+        <div class="radio">
+            <label>
+                <input type="radio" name="input-flavor" value="url" />
+                Read From Url
+            </label>
+        </div>
+        <input id="swaggerUrl" class="form-control" name="swagger-url" placeholder="Enter Url" />
+
+        <div class="radio">
+            <label>
+                <input type="radio" name="input-flavor" value="file" />
+                Upload File
+            </label>
+        </div>
+        <input id="swaggerFile" type="file" name="swagger-file" />
+    </div>
+    <input class="btn btn-default" type="submit" value="Submit" />
+</form>
