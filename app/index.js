@@ -12,7 +12,7 @@ var path = require('path');
 var sfmt = require('sfmt');
 
 var routes = require('./routes');
-
+var viewHelpers = require('./lib/viewHelpers');
 var app = express();
 
 // view engine setup
@@ -28,12 +28,24 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use('/bootstrap', express.static(path.join(__dirname, '..', 'bower_components/bootstrap/dist')));
 app.use('/jquery', express.static(path.join(__dirname, '..', 'bower_components/jquery/dist')));
 
+
+
 //app.use(favicon());
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(formidable.parse());
 app.use(flash());
+
+Object.keys(viewHelpers.sync).forEach(function (helper) {
+  debug('registering sync helper ' + helper.name);
+  hbs.registerHelper(helper, viewHelpers.sync[helper]);
+});
+
+Object.keys(viewHelpers.async).forEach(function (helper) {
+  debug('register async helper ' + helper.name);
+  hbs.registerAsyncHelper(helper, viewHelpers.async[helper]);
+});
 
 Object.keys(routes).forEach(function (route) {
   debug(sfmt('Binding route %s', route));
