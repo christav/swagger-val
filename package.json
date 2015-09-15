@@ -32,7 +32,7 @@
     "joe-reporter-console": "^1.2.1"
   },
   "scripts": {
-    "start": "gulp build & node ./server.js",
+    "start": "node ./server.js",
     "test": "node -e \"require('bulk-require')('tests', '**/*-tests.js')\""
   }
 }
