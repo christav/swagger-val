@@ -9,9 +9,16 @@
   },
   "private": true,
   "dependencies": {
+    "body-parser": "^1.13.3",
+    "connect-flash": "^0.1.1",
     "debug": "^2.2.0",
+    "express": "^4.13.3",
+    "express-formidable": "^0.1.1",
+    "express-hbs": "^0.8.4",
     "handlebars": "^4.0.1",
     "lodash": "^3.10.1",
+    "morgan": "^1.6.1",
+    "serve-favicon": "^2.3.0",
     "sfmt": "^1.0.3",
     "swagger-schema-official": "^2.0.0-96305d9",
     "tv4": "^1.2.5"

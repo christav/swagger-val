@@ -1,38 +1,75 @@
 'use strict';
 
+var bodyParser = require('body-parser');
 var debug = require('debug')('swagger-val:main');
-var Hapi = require('hapi');
-var handlebars = require('handlebars');
-var layouts = require('handlebars-layouts');
-var Hoek = require('hoek');
-
+var favicon = require('serve-favicon');
+var express = require('express');
+var formidable = require('express-formidable');
+var flash = require('connect-flash');
+var hbs = require('express-hbs');
+var logger = require('morgan');
+var path = require('path');
 var sfmt = require('sfmt');
 
 var routes = require('./routes');
-var server = new Hapi.Server();
 
-var engine = handlebars.create();
-layouts.register(engine);
+var app = express();
 
-var port = +(process.env['PORT'] || 3000);
-server.connection({port: port});
-server.register([require('vision'), require('inert')], function (err) {
-  Hoek.assert(!err, err);
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.engine('hbs', hbs.express3({
+  partialsDir: path.join(__dirname, 'views', 'partials'),
+  defaultLayout: path.join(__dirname, 'views', 'layouts', 'default.hbs'),
+  layoutsDir: path.join(__dirname, 'views', 'partials')
+}));
 
-  server.views({
-    engines: {
-      hbs: engine
-    },
-    relativeTo: __dirname,
-    path: './views',
-    partialsPath: './views/partials',
-    helpersPath: './lib/viewHelpers',
+app.set('view engine', 'hbs');
+app.use('/public', express.static(path.join(__dirname, 'public')));
+app.use('/bootstrap', express.static(path.join(__dirname, '..', 'bower_components/bootstrap/dist')));
+app.use('/jquery', express.static(path.join(__dirname, '..', 'bower_components/jquery/dist')));
+
+//app.use(favicon());
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
+app.use(formidable.parse());
+app.use(flash());
+
+Object.keys(routes).forEach(function (route) {
+  debug(sfmt('Binding route %s', route));
+  app.use(route, routes[route]);
+});
+
+/// catch 404 and forwarding to error handler
+app.use(function(req, res, next) {
+  var err = new Error('Not Found');
+  err.status = 404;
+  next(err);
+});
+
+/// error handlers
+
+// development error handler
+// will print stacktrace
+if (app.get('env') === 'development') {
+  app.use(function(err, req, res, next) {
+      res.status(err.status || 500);
+      res.render('error', {
+        message: err.message,
+        error: err
+      });
   });
+}
 
-  routes.forEach(function (route) {
-    debug(sfmt('Binding route for %{0}', route.path));
-    server.route(route);
+// production error handler
+// no stacktraces leaked to user
+app.use(function(err, req, res, next) {
+  res.status(err.status || 500);
+  res.render('error', {
+    message: err.message,
+    error: {}
   });
 });
 
-module.exports = server;
+
+module.exports = app;

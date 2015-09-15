@@ -1,22 +1,7 @@
 'use strict';
-var path = require('path');
+var express = require('express');
+var root = require('./features/root/root-routes');
 
-module.exports = [
-  // Static files
-  {
-    method: 'GET',
-    path: '/public/{param*}',
-    handler: {
-      directory: {
-        path: path.join(__dirname, '../webroot')
-      }
-    }
-  },
-  {
-    method: 'GET',
-    path: '/',
-    handler: {
-      view: 'index'
-    }
-  }
-];
+module.exports = {
+  '/': root
+};
