@@ -19,7 +19,5 @@ $(function () {
 
   updateVisibility();
 
-  inputOptions.forEach(function (pair) {
-    pair[0].on('change', updateVisibility);
-  });
+  $('input[type="radio"]').on('change', updateVisibility);
 });
