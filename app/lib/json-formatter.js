@@ -140,9 +140,13 @@ function addCommas(items) {
 }
 
 exports.format = function (data) {
-  return addCommas(_.flatten([
+  var lines = addCommas(_.flatten([
       { string: '{', level: 0, path: '/' },
       formatObject(1, '', null, data),
       { string: '}', level: 0 }
   ]));
+  lines.forEach(function (line, index) {
+    line.lineNum = index + 1;
+  });
+  return lines;
 };

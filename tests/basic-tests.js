@@ -2,6 +2,7 @@
 
 var expect = require('chai').expect;
 var joe = require('joe');
+var sfmt = require('sfmt');
 var tv4 = require('tv4');
 var schema = require('swagger-schema-official/schema.json');
 tv4.addSchema(schema);
@@ -20,6 +21,7 @@ joe.describe('Invalid swagger', function (describe, it) {
 
   it('should not be valid', function () {
     var result = tv4.validateMultiple(swagger, schema);
+    console.log(sfmt('%i', result));
     expect(result.valid).to.be.false;
   });
 });

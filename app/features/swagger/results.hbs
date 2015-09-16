@@ -1,0 +1,21 @@
+<h2>Validation Results</h2>
+{{#if hasGlobalErrors}}
+<div class="alert alert-danger" role="alert">
+    <span><strong>Error</strong> Swagger failed to parse</span>
+{{#each globalErrors}}
+    <p>{{message}}
+{{/each}}
+</div>
+{{/if}}
+<div class="{{panelClass}}">
+    <div class="panel-heading"><strong>Swagger Document</strong></div>
+        <div class="result-table container">
+{{#each body}}
+            <div class="row" data-datapath="{{path}}">
+                <div class="col-md-1" style="height:20px"><p class="text-right"><strong>{{lineNum}}</strong></div>
+                <div class="col-md-11">{{indent}}{{string}}</div>
+            </div>
+{{/each}}
+        </div>
+    </div>
+</div>
