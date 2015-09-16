@@ -2,8 +2,11 @@
     <title>Swagger Validator</title>
 {{/contentFor}}
 
+{{#if message}}
+<h2 class="text-info">{{message}}</h2>
+{{/if}}
 <h2>Validate your swagger here</h2>
-<form action="/swagger/validate" method="post">
+<form action="/swagger/validate" method="post" enctype="multipart/form-data">
     <div class="form-group">
         <div class="radio">
             <label>

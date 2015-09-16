@@ -8,7 +8,7 @@ var router = express.Router();
 
 router.get('/', function (req, res) {
   debug('trying to render root template');
-  res.render('index');
+  res.render('index', { message: req.flash('message') });
 });
 
 router.get('/favicon.ico', function (req, res) {

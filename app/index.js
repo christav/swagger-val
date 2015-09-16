@@ -9,6 +9,7 @@ var flash = require('connect-flash');
 var hbs = require('express-hbs');
 var logger = require('morgan');
 var path = require('path');
+var session = require('express-session');
 var sfmt = require('sfmt');
 
 var routes = require('./routes');
@@ -29,9 +30,9 @@ app.use('/bootstrap', express.static(path.join(__dirname, '..', 'bower_component
 app.use('/jquery', express.static(path.join(__dirname, '..', 'bower_components/jquery/dist')));
 
 
-
 //app.use(favicon());
 app.use(logger('dev'));
+app.use(session({ 'secret': 'this is not so secret' }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(formidable.parse());
