@@ -11,6 +11,7 @@ var sfmt = require('sfmt');
 var util = require('util');
 
 var validator = require('../../lib/swagger-validator');
+var ResultsViewModel = require('./results-viewmodel');
 
 // Temporary debugging route
 
@@ -53,51 +54,38 @@ function figureOutPostType(req, res) {
 
   return handler.validator(req.body[handler.fieldName])
     .then(function (result) {
+      debug(sfmt('Rendering view model %s', util.inspect(result, {depth: null})));
       req.result = routeResult.render(resultsView, result);
     });
-}
-
-function isGlobalError(err) {
-  return err.dataPath === null;
 }
 
 function validateFromInput(input) {
   return Promise.resolve().then(function () {
     debug('Attempting to parse ' + input);
     var results = validator(input);
-    var globalErrors = results.errors.filter(isGlobalError);
-    var validationErrors = results.errors.filter(_.negate(isGlobalError));
-
-    var model = {
-      isValid: results.isValid,
-      globalErrors: globalErrors,
-      hasGlobalErrors: globalErrors.length > 0,
-      validationErrors: validationErrors,
-      hasValidationErrors: validationErrors > 0,
-      body: results.body
-    };
+    var model = new ResultsViewModel(results);
     return model;
   });
 }
 
 function validateFromUrl(url) {
-  return Promise.resolve({
+  return Promise.resolve(new ResultsViewModel({
     isValid: false,
     errors: [ {
-      path: null,
+      dataPath: null,
       message: 'Url support not implemented'
     }]
-  });
+  }));
 }
 
 function validateFromFile(file) {
-  return Promise.resolve({
+  return Promise.resolve(new ResultsViewModel({
     isValid: false,
     errors: [ {
-      path: null,
+      dataPath: null,
       message: 'File support not implemented yet'
     }]
-  });
+  }));
 }
 
 var router = express.Router();

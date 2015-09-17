@@ -145,8 +145,5 @@ exports.format = function (data) {
       formatObject(1, '', null, data),
       { string: '}', level: 0 }
   ]));
-  lines.forEach(function (line, index) {
-    line.lineNum = index + 1;
-  });
   return lines;
 };

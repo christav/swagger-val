@@ -7,15 +7,19 @@
 {{/each}}
 </div>
 {{/if}}
-<div class="{{panelClass}}">
-    <div class="panel-heading"><strong>Swagger Document</strong></div>
-        <div class="result-table container">
-{{#each body}}
-            <div class="row" data-datapath="{{path}}">
-                <div class="col-md-1" style="height:20px"><p class="text-right"><strong>{{lineNum}}</strong></div>
-                <div class="col-md-11">{{indent}}{{string}}</div>
+<div class="panel panel-default">
+    <div class="result-table container">
+{{#each lines}}
+        <div class="row {{errorClass}}">
+            <div class="col-md-1" style="height:20px">
+                <p class="text-right"><strong>{{lineNum}}</strong>
             </div>
-{{/each}}
+            <div class="col-md-11"><p>{{string}}
+                {{#each errors}}
+                <p class="{{../errorClass}}">{{message}}
+                {{/each}}
+            </div>
         </div>
+{{/each}}
     </div>
 </div>
