@@ -91,14 +91,14 @@ function formatArrayItem(level, parentPath, item) {
     formatted = [
       { string: '[', level: level, path: parentPath },
       formatArray(level + 1, parentPath, "", item),
-      { string: ']', level: level, path: parentPath }
+      { string: ']', level: level }
     ];
   } else if (_.isObject(item)) {
     debug('item is object');
     formatted = [
       { string: '{', level: level, path: parentPath },
       formatObject(level + 1, parentPath, "", item),
-      { string: '}', level: level, path: parentPath }
+      { string: '}', level: level }
     ]
   } else {
     debug('item is scalar');
@@ -124,7 +124,7 @@ function formatScalar(level, parentPath, propertyName, propertyValue) {
 
 function createPathSegment(propertyName) {
 
-  return propertyName.replace('~', '~0').replace('/', '~1');
+  return propertyName.replace(/~/g, '~0').replace(/\//g, '~1');
 }
 
 function addCommas(items) {

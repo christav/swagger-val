@@ -4,3 +4,12 @@ body {
 .container.content-block {
   padding: 40px 15px;
 }
+
+.result-table .row {
+    padding: 0px 15px;
+}
+
+.result-table .row.error-line {
+    background-color: red;
+    color: white;
+}

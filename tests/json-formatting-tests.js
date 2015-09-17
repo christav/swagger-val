@@ -151,4 +151,21 @@ joe.describe('Json display formatting', function (describe, it) {
       });
     });
   });
+
+  describe('object with slashes in property names', function (describe, it) {
+    var formatted;
+
+    this.on('test.before', function () {
+      formatted = formatter.format({
+        a: {
+          '/first': 'first',
+          '/first/second': 'second'
+        }
+      });
+    });
+
+    it('should have escaped the slashes', function () {
+      expect(formatted[3].path).to.match(/^\/a\/~1first~1second/);
+    });
+  });
 });
