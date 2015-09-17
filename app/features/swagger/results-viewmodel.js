@@ -34,8 +34,8 @@ module.exports = function ResultsViewModel(parseResults) {
 function consolidateErrors(parseErrors) {
   return parseErrors.reduce(function (results, err) {
     var errList = results[err.dataPath] || [];
-    errList.push(err);
-    results[err.dataPath] = errList;
+    errList.push(flattenErrors(err));
+    results[err.dataPath] = _.flatten(errList);
     return results;
   }, {});
 }
@@ -46,6 +46,23 @@ function indentedErrors(errors, level) {
     return _.assign({}, err, {
       message: new handlebars.SafeString(_.repeat(indentString, level) + err.message) });
   });
+}
+
+function flattenErrors(err) {
+    function flattenError(error, level, results) {
+      results.push({ message: _.repeat(indentString, level) + error.message });
+      if (error.subErrors && error.subErrors.length && error.subErrors.length > 0) {
+        for(var i = 0; i < error.subErrors.length; ++i) {
+          results = flattenError(error.subErrors[i], level + 1, results);
+        }
+      }
+      return results;
+    }
+
+    var results = [];
+    results = flattenError(err, 0, results);
+    debug(sfmt('flattened errors = %i', results));
+    return results;
 }
 
 function isGlobalError(err) { return err.dataPath === null; }
