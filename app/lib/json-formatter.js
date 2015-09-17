@@ -52,8 +52,7 @@ function formatProperty(level, parentPath, propertyName, propertyValue) {
   function makePostamble(postambleChar) {
     return {
       string: sfmt('%{0}', postambleChar),
-      level: level,
-      path: propertyPath
+      level: level
     };
   }
 
