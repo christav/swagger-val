@@ -3,7 +3,6 @@
 $(function () {
   var inputOptions = [
     [ $('input[type="radio"][value="input"]'), $('#swaggerInput') ],
-    [ $('input[type="radio"][value="url"]'), $('#swaggerUrl') ],
     [ $('input[type="radio"][value="file"]'), $('#swaggerFile') ]
   ];
 

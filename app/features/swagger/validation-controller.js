@@ -3,6 +3,7 @@
 var debug = require('debug')('swagger-val:swagger-validation-controller');
 var _ = require('lodash');
 var express = require('express');
+var fs = require('fs');
 var path = require('path');
 var Promise = require('bluebird');
 var promiseUtils = require('../../lib/promise-utils');
@@ -33,10 +34,6 @@ var inputHandlers = {
     fieldName: 'swagger-input',
     validator: validateFromInput
   },
-  url: {
-    fieldName: 'swagger-url',
-    validator: validateFromUrl
-  },
   file: {
     fieldName: 'swagger-file',
     validator: validateFromFile
@@ -59,33 +56,20 @@ function figureOutPostType(req, res) {
     });
 }
 
-function validateFromInput(input) {
-  return Promise.resolve().then(function () {
+function doValidation(input) {
     debug('Attempting to parse ' + input);
     var results = validator(input);
     var model = new ResultsViewModel(results);
     return model;
-  });
 }
 
-function validateFromUrl(url) {
-  return Promise.resolve(new ResultsViewModel({
-    isValid: false,
-    errors: [ {
-      dataPath: null,
-      message: 'Url support not implemented'
-    }]
-  }));
+function validateFromInput(input) {
+  return Promise.resolve(input).then(doValidation);
 }
 
 function validateFromFile(file) {
-  return Promise.resolve(new ResultsViewModel({
-    isValid: false,
-    errors: [ {
-      dataPath: null,
-      message: 'File support not implemented yet'
-    }]
-  }));
+  return fs.readFileAsync(file.path, 'utf-8')
+    .then(doValidation);
 }
 
 var router = express.Router();

@@ -9,11 +9,15 @@ var flash = require('connect-flash');
 var hbs = require('express-hbs');
 var logger = require('morgan');
 var path = require('path');
+var Promise = require('bluebird');
 var session = require('express-session');
 var sfmt = require('sfmt');
 
 var routes = require('./routes');
 var viewHelpers = require('./lib/viewHelpers');
+
+Promise.promisifyAll(require('fs'));
+
 var app = express();
 
 // view engine setup
