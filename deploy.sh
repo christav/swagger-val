@@ -77,6 +77,7 @@ installNodist () {
     cd node
     git clone git://github.com/marcelklehr/nodist.git 2>/dev/null
     cd nodist
+    export NODIST_PREFIX=`pwd`
     npm install --production
     cd bin
     nodist update
