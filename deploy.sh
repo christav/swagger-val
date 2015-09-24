@@ -82,6 +82,7 @@ installNodist () {
     cd bin
     nodist update
   fi
+  export NODIST_PREFIX=`cd "$NODE_RUNTIME_ROOT/node/nodist"; pwd`
 }
 
 installNodeAndNpm() {
@@ -114,6 +115,8 @@ exitWithMessageOnError "Kudu Sync failed"
 
 # 2. Install nodist
 installNodist
+
+echo "nodist installed at $NODIST_PREFIX"
 
 # 3. Install Node and NPM
 installNodeAndNpm
