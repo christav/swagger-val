@@ -4,7 +4,7 @@ var app = require('./app');
 
 debug('Port environment variable set to [' + process.env.PORT + ']');
 
-var port = +(process.env.PORT || 3000);
+var port = process.env.PORT || 3000;
 
 debug('Starting up on port ' + port);
 
