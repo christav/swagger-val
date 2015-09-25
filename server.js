@@ -2,6 +2,8 @@ var debug = require('debug')('swagger-val');
 var sfmt = require('sfmt');
 var app = require('./app');
 
+debug('Port environment variable set to [' + process.env.PORT + ']');
+
 var port = +(process.env.PORT || 3000);
 
 debug('Starting up on port ' + port);
